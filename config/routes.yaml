@@ -3,3 +3,14 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+# config/routes.yaml
+home:
+    path: /
+    controller: App\Controller\HomeController::index
+    #controller: App\Controller\AccountController::index
+    #controller: App\Controller\ContactController::index
+    #controller: App\Controller\HabitatsController::index
+    #controller: App\Controller\NosServicesController::index
+    #controller: App\Controller\SigninController::index
+    #controller: App\Controller\SignupController::index
+    #controller: App\Controller\ZooController::index

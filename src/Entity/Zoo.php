@@ -26,11 +26,11 @@ class Zoo
     #[ORM\Column(type: Types::ARRAY)]
     private array $pmOpeningTime = [];
 
-    #[ORM\Column]
-    private ?int $maxGuest = null;
+    #[ORM\Column(length: 50)]
+    private ?string $utilisateur = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $CreatedAt = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
@@ -88,26 +88,26 @@ class Zoo
         return $this;
     }
 
-    public function getMaxGuest(): ?int
+    public function getUtilisateur(): ?string
     {
-        return $this->maxGuest;
+        return $this->utilisateur;
     }
 
-    public function setMaxGuest(int $maxGuest): static
+    public function setUtilisateur(string $utilisateur): static
     {
-        $this->maxGuest = $maxGuest;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->CreatedAt;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $CreatedAt): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->CreatedAt = $CreatedAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
