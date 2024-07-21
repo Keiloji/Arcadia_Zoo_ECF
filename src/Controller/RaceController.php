@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Account;
-use App\Repository\AccountRepository;
+use App\Entity\Race;
+use App\Repository\RaceRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,13 +19,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/Account', name:'app_api_Account_')]
-class AccountController extends AbstractController
+#[Route('/api/Race', name:'app_api_Race_')]
+class RaceController extends AbstractController
 {
     
     public function __construct(
         private EntityManagerInterface $manager, 
-        private AccountRepository $repository,
+        private RaceRepository $repository,
         private SerializerInterface $serializer,
         private UrlGeneratorInterface $urlGenerator,
         ) {
@@ -34,18 +34,18 @@ class AccountController extends AbstractController
     #[Route(methods:'POST')]
     public function new(Request $request): JsonResponse
 {
-    $Account = $this->serializer->deserialize($request->getContent(), Account::class, 'json');
-    $Account->setCreatedAt(new DateTimeImmutable());
+    $Race = $this->serializer->deserialize($request->getContent(), Race::class, 'json');
+    $Race->setCreatedAt(new DateTimeImmutable());
 
 
-    $this->manager->persist($Account);
+    $this->manager->persist($Race);
     $this->manager->flush();
 
 
-    $responseData = $this->serializer->serialize($Account, 'json');
+    $responseData = $this->serializer->serialize($Race, 'json');
     $location= $this->urlGenerator->generate(
-        'app_api_Account_show',
-        ['id' => $Account->getId()],
+        'app_api_Race_show',
+        ['id' => $Race->getId()],
         referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
     );
 
@@ -56,10 +56,10 @@ class AccountController extends AbstractController
     #[Route('/{id}',name: 'show', methods:'GET')]
     public function show(int $id): JsonResponse
 {
-    $Account= $this->repository->findOneBy(['id' => $id]);
+    $Race= $this->repository->findOneBy(['id' => $id]);
 
-    if ($Account) {
-        $responseData = $this->serializer->serialize($Account, format: 'json');
+    if ($Race) {
+        $responseData = $this->serializer->serialize($Race, format: 'json');
 
         return new JsonResponse($responseData, Response::HTTP_OK, [], true);
     }
@@ -71,15 +71,15 @@ class AccountController extends AbstractController
     #[Route('/{id}',name:'edit', methods:'PUT')]
     public function edit(int $id, Request $request): JsonResponse
 {
-    $Account= $this->repository->findOneBy(['id' => $id]);
-    if ($Account){
-        $Account= $this->serializer->deserialize(
+    $Race= $this->repository->findOneBy(['id' => $id]);
+    if ($Race){
+        $Race= $this->serializer->deserialize(
             $request->getContent(),
-            Account::class,
+            Race::class,
             'json',
-            [AbstractNormalizer::OBJECT_TO_POPULATE => $Account]
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $Race]
         );
-        $Account->setUpdateAt(new DateTimeImmutable());
+        $Race->setUpdateAt(new DateTimeImmutable());
 
         $this->manager->flush();
 
@@ -93,9 +93,9 @@ class AccountController extends AbstractController
     #[Route('/{id}',name:'delete', methods:'DELETE')]
     public function delete(int $id): JsonResponse
 {
-    $Account = $this->repository->findOneBy(['id' => $id]);
-    if ($Account) {
-        $this->manager->remove($Account);
+    $Race = $this->repository->findOneBy(['id' => $id]);
+    if ($Race) {
+        $this->manager->remove($Race);
         $this->manager->flush();
 
         return new JsonResponse(data: null, status: Response::HTTP_NO_CONTENT);
