@@ -1,3 +1,4 @@
+
 framework:
     router:
         # Configure how to generate URLs in non-HTTP contexts, such as CLI commands.
