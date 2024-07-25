@@ -7,6 +7,7 @@ use App\Repository\AccountRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Annotations as OA;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -22,6 +23,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/Account', name:'app_api_Account_')]
 class AccountController extends AbstractController
 {
+    //$Account->setUtilisateur($this-getUser()));
     
     public function __construct(
         private EntityManagerInterface $manager, 
@@ -32,6 +34,34 @@ class AccountController extends AbstractController
         
     }
     #[Route(methods:'POST')]
+
+
+    /** @OA\Get(
+     *     path="/api/Account",
+     *     summary="Créer un Account",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Donner du Account à créer",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Nom du Account"),
+     *             @OA\Property(property="description", type="string", example="Description du Account")
+     *         )
+     * 
+     *     ),
+     *     @OA\Response(
+     *         response=261,
+     *         description="Account crée avec succès",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="name", type="string", example="Nom du Account"),
+     *             @OA\Property(property="description", type="string", example="Description Account"),
+     *             @OA\Property(property="createdAt", type="string", format="date-time")
+     *         )
+     *     )
+     *     )
+     */
+
     public function new(Request $request): JsonResponse
 {
     $Account = $this->serializer->deserialize($request->getContent(), Account::class, 'json');
@@ -54,9 +84,40 @@ class AccountController extends AbstractController
 }
 
     #[Route('/{id}',name: 'show', methods:'GET')]
+
+/** 
+ * @OA\Put(
+ *     path="/api/Account/{id}",
+ *     summary="Mettre à jour un Account par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Account à mettre à jour",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Nom du Account"),
+ *             @OA\Property(property="description", type="string", example="Description du Account")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Account mis à jour avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Account non trouvé"
+ *     )
+ * )
+ */
+
     public function show(int $id): JsonResponse
 {
-    $Account= $this->repository->findOneBy(['id' => $id]);
+    $Account = $this->repository->findOneBy(['id' => $id]);
 
     if ($Account) {
         $responseData = $this->serializer->serialize($Account, format: 'json');
@@ -69,9 +130,40 @@ class AccountController extends AbstractController
 }
 
     #[Route('/{id}',name:'edit', methods:'PUT')]
+
+/** 
+ * @OA\Put(
+ *     path="/api/Account/{id}",
+ *     summary="Mettre à jour un Account par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Account à mettre à jour",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Nom du Account"),
+ *             @OA\Property(property="description", type="string", example="Description du Account")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Account mis à jour avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Account non trouvé"
+ *     )
+ * )
+ */
+
     public function edit(int $id, Request $request): JsonResponse
 {
-    $Account= $this->repository->findOneBy(['id' => $id]);
+    $Account = $this->repository->findOneBy(['id' => $id]);
     if ($Account){
         $Account= $this->serializer->deserialize(
             $request->getContent(),
@@ -91,9 +183,32 @@ class AccountController extends AbstractController
 }
 
     #[Route('/{id}',name:'delete', methods:'DELETE')]
+
+/** 
+ * @OA\Delete(
+ *     path="/api/Account/{id}",
+ *     summary="Supprimer un Account par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID de Account à supprimer",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Account supprimé avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Account non trouvé"
+ *     )
+ * )
+ */
+
     public function delete(int $id): JsonResponse
 {
-    $Account = $this->repository->findOneBy(['id' => $id]);
+    $Account= $this->repository->findOneBy(['id' => $id]);
     if ($Account) {
         $this->manager->remove($Account);
         $this->manager->flush();
