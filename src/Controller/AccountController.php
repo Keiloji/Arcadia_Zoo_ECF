@@ -24,42 +24,16 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/Account', name:'app_api_Account_')]
 class AccountController extends AbstractController
 {
-    private JwtService $jwtService;
-
+    
     public function __construct(
         private EntityManagerInterface $manager, 
         private AccountRepository $repository,
         private SerializerInterface $serializer,
         private UrlGeneratorInterface $urlGenerator,
-        JwtService $jwtService 
-    ) { $this->jwtService = $jwtService; // <-- Initialiser la propriété
-}
-    #[Route('/create', name: 'create', methods: ['POST'])]
-    /** 
-     * @OA\Post(
-     *     path="/api/Account/create",
-     *     summary="Créer un nouveau compte",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         description="Données du compte à créer",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string", example="Nom du compte"),
-     *             @OA\Property(property="description", type="string", example="Description du compte")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Compte créé avec succès",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="name", type="string", example="Nom du compte"),
-     *             @OA\Property(property="description", type="string", example="Description du compte"),
-     *             @OA\Property(property="createdAt", type="string", format="date-time")
-     *         )
-     *     )
-     * )
-     */
+        ) {
+        
+    }
+    #[Route(methods:'POST')]
     public function new(Request $request): JsonResponse
     {
         $account = $this->serializer->deserialize($request->getContent(), Account::class, 'json');
@@ -74,37 +48,10 @@ class AccountController extends AbstractController
         return new JsonResponse($responseData, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
-    /** 
-     * @OA\Get(
-     *     path="/api/Account/{id}",
-     *     summary="Afficher un compte par son ID",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID du compte à afficher",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Compte trouvé",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="name", type="string", example="Nom du compte"),
-     *             @OA\Property(property="description", type="string", example="Description du compte")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Compte non trouvé"
-     *     )
-     * )
-     */
+    #[Route('/{id}',name: 'show', methods:'GET')]
     public function show(int $id): JsonResponse
-    {
-        $account = $this->repository->findOneBy(['id' => $id]);
+{
+    $Account= $this->repository->findOneBy(['id' => $id]);
 
         if ($account) {
             $responseData = $this->serializer->serialize($account, 'json');
@@ -115,43 +62,18 @@ class AccountController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name:'edit', methods: ['PUT'])]
-    /** 
-     * @OA\Put(
-     *     path="/api/Account/{id}",
-     *     summary="Mettre à jour un compte par son ID",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID du compte à mettre à jour",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="name", type="string", example="Nom du compte"),
-     *             @OA\Property(property="description", type="string", example="Description du compte")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=204,
-     *         description="Compte mis à jour avec succès"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Compte non trouvé"
-     *     )
-     * )
-     */
+    #[Route('/{id}',name:'edit', methods:'PUT')]
     public function edit(int $id, Request $request): JsonResponse
-    {
-        $account = $this->repository->findOneBy(['id' => $id]);
-
-        if ($account) {
-            $this->serializer->deserialize($request->getContent(), Account::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $account]);
-            $account->setUpdatedAt(new DateTimeImmutable());
+{
+    $Account= $this->repository->findOneBy(['id' => $id]);
+    if ($Account){
+        $Account= $this->serializer->deserialize(
+            $request->getContent(),
+            Account::class,
+            'json',
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $Account]
+        );
+        $Account->setUpdateAt(new DateTimeImmutable());
 
             $this->manager->flush();
 
@@ -161,35 +83,13 @@ class AccountController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name:'delete', methods: ['DELETE'])]
-    /** 
-     * @OA\Delete(
-     *     path="/api/Account/{id}",
-     *     summary="Supprimer un compte par son ID",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID du compte à supprimer",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=204,
-     *         description="Compte supprimé avec succès"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Compte non trouvé"
-     *     )
-     * )
-     */
+    #[Route('/{id}',name:'delete', methods:'DELETE')]
     public function delete(int $id): JsonResponse
-    {
-        $account = $this->repository->findOneBy(['id' => $id]);
-
-        if ($account) {
-            $this->manager->remove($account);
-            $this->manager->flush();
+{
+    $Account = $this->repository->findOneBy(['id' => $id]);
+    if ($Account) {
+        $this->manager->remove($Account);
+        $this->manager->flush();
 
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
