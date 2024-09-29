@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Role;
-use App\Repository\RoleRepository;
+use App\Entity\Security; 
+use App\Repository\SecurityRepository; 
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Annotations as OA;
@@ -17,38 +17,47 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/Role', name: 'app_api_Role_')]
-class RoleController extends AbstractController
+#[Route('/api/Security', name:'app_api_Security_')]
+class SecurityController extends AbstractController
 {
+    private EntityManagerInterface $manager;
+    private SecurityRepository $repository;
+    private SerializerInterface $serializer;
+    private UrlGeneratorInterface $urlGenerator;
+
     public function __construct(
-        private EntityManagerInterface $manager,
-        private RoleRepository $repository,
-        private SerializerInterface $serializer,
-        private UrlGeneratorInterface $urlGenerator
+        EntityManagerInterface $manager, 
+        SecurityRepository $repository,
+        SerializerInterface $serializer,
+        UrlGeneratorInterface $urlGenerator
     ) {
+        $this->manager = $manager;
+        $this->repository = $repository;
+        $this->serializer = $serializer;
+        $this->urlGenerator = $urlGenerator;
     }
 
-    #[Route(methods: 'POST')]
+    #[Route(methods:'POST')]
     /**
      * @OA\Post(
-     *     path="/api/Role",
-     *     summary="Créer un nouveau rôle",
+     *     path="/api/Security",
+     *     summary="Créer un nouveau Security",
      *     @OA\RequestBody(
      *         required=true,
-     *         description="Détails du rôle à créer",
+     *         description="Données pour créer un Security",
      *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string", example="Nom du rôle"),
-     *             @OA\Property(property="description", type="string", example="Description du rôle")
+     *             @OA\Property(property="name", type="string", example="Nom du Security"),
+     *             @OA\Property(property="description", type="string", example="Description du Security")
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Rôle créé avec succès",
+     *         description="Security créé avec succès",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="name", type="string", example="Nom du rôle"),
-     *             @OA\Property(property="description", type="string", example="Description du rôle"),
+     *             @OA\Property(property="name", type="string", example="Nom du Security"),
+     *             @OA\Property(property="description", type="string", example="Description du Security"),
      *             @OA\Property(property="createdAt", type="string", format="date-time")
      *         )
      *     )
@@ -56,105 +65,105 @@ class RoleController extends AbstractController
      */
     public function new(Request $request): JsonResponse
     {
-        $role = $this->serializer->deserialize($request->getContent(), Role::class, 'json');
-        $role->setCreatedAt(new DateTimeImmutable());
+        $security = $this->serializer->deserialize($request->getContent(), Security::class, 'json');
+        $security->setCreatedAt(new DateTimeImmutable());
 
-        $this->manager->persist($role);
+        $this->manager->persist($security);
         $this->manager->flush();
 
-        $responseData = $this->serializer->serialize($role, 'json');
+        $responseData = $this->serializer->serialize($security, 'json');
         $location = $this->urlGenerator->generate(
-            'app_api_Role_show',
-            ['id' => $role->getId()],
+            'app_api_Security_show',
+            ['id' => $security->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
         return new JsonResponse($responseData, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
-    #[Route('/{id}', name: 'show', methods: 'GET')]
+    #[Route('/{id}', name: 'show', methods:'GET')]
     /**
      * @OA\Get(
-     *     path="/api/Role/{id}",
-     *     summary="Afficher un rôle par son ID",
+     *     path="/api/Security/{id}",
+     *     summary="Afficher un Security par son ID",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID du rôle à afficher",
+     *         description="ID du Security à afficher",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Rôle trouvé",
+     *         description="Security trouvé avec succès",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="name", type="string", example="Nom du rôle"),
-     *             @OA\Property(property="description", type="string", example="Description du rôle"),
+     *             @OA\Property(property="name", type="string", example="Nom du Security"),
+     *             @OA\Property(property="description", type="string", example="Description du Security"),
      *             @OA\Property(property="createdAt", type="string", format="date-time")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Rôle non trouvé"
+     *         description="Security non trouvé"
      *     )
      * )
      */
     public function show(int $id): JsonResponse
     {
-        $role = $this->repository->findOneBy(['id' => $id]);
+        $security = $this->repository->findOneBy(['id' => $id]);
 
-        if ($role) {
-            $responseData = $this->serializer->serialize($role, 'json');
+        if ($security) {
+            $responseData = $this->serializer->serialize($security, 'json');
             return new JsonResponse($responseData, Response::HTTP_OK, [], true);
         }
 
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name: 'edit', methods: 'PUT')]
+    #[Route('/{id}', name:'edit', methods:'PUT')]
     /**
      * @OA\Put(
-     *     path="/api/Role/{id}",
-     *     summary="Mettre à jour un rôle par son ID",
+     *     path="/api/Security/{id}",
+     *     summary="Mettre à jour un Security par son ID",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID du rôle à mettre à jour",
+     *         description="ID du Security à mettre à jour",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="name", type="string", example="Nom du rôle"),
-     *             @OA\Property(property="description", type="string", example="Description du rôle")
+     *             @OA\Property(property="name", type="string", example="Nom du Security"),
+     *             @OA\Property(property="description", type="string", example="Description du Security")
      *         )
      *     ),
      *     @OA\Response(
      *         response=204,
-     *         description="Rôle mis à jour avec succès"
+     *         description="Security mis à jour avec succès"
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Rôle non trouvé"
+     *         description="Security non trouvé"
      *     )
      * )
      */
     public function edit(int $id, Request $request): JsonResponse
     {
-        $role = $this->repository->findOneBy(['id' => $id]);
+        $security = $this->repository->findOneBy(['id' => $id]);
 
-        if ($role) {
-            $role = $this->serializer->deserialize(
+        if ($security) {
+            $security = $this->serializer->deserialize(
                 $request->getContent(),
-                Role::class,
+                Security::class,
                 'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $role]
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $security]
             );
-            $role->setUpdatedAt(new DateTimeImmutable());
+            $security->setUpdatedAt(new DateTimeImmutable());
 
             $this->manager->flush();
 
@@ -164,34 +173,34 @@ class RoleController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name: 'delete', methods: 'DELETE')]
+    #[Route('/{id}', name:'delete', methods:'DELETE')]
     /**
      * @OA\Delete(
-     *     path="/api/Role/{id}",
-     *     summary="Supprimer un rôle par son ID",
+     *     path="/api/Security/{id}",
+     *     summary="Supprimer un Security par son ID",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID du rôle à supprimer",
+     *         description="ID du Security à supprimer",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=204,
-     *         description="Rôle supprimé avec succès"
+     *         description="Security supprimé avec succès"
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Rôle non trouvé"
+     *         description="Security non trouvé"
      *     )
      * )
      */
     public function delete(int $id): JsonResponse
     {
-        $role = $this->repository->findOneBy(['id' => $id]);
+        $security = $this->repository->findOneBy(['id' => $id]);
 
-        if ($role) {
-            $this->manager->remove($role);
+        if ($security) {
+            $this->manager->remove($security);
             $this->manager->flush();
 
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);

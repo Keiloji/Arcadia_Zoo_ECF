@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\UserRepository;
@@ -20,6 +19,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $firstName = null; // Ajout de la propriété firstName
+
+    #[ORM\Column(length: 255)]
+    private ?string $lastName = null;  // Ajout de la propriété lastName
 
     /**
      * @var list<string> The user roles
@@ -58,6 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->apiToken = bin2hex(random_bytes(length: 20));
         $this->rapportVeterinaire = new ArrayCollection();
     }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,7 +77,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+        return $this;
+    }
 
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): static
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
+
+    public function getLastName(): ?string  // Getter pour lastName
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): static  // Setter pour lastName
+    {
+        $this->lastName = $lastName;
         return $this;
     }
 
@@ -105,7 +132,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
@@ -120,7 +146,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -129,8 +154,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // Si vous stockez des données temporaires et sensibles sur l'utilisateur, effacez-les ici
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -141,7 +165,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -153,7 +176,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
@@ -165,7 +187,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiToken(string $apiToken): static
     {
         $this->apiToken = $apiToken;
-
         return $this;
     }
 
@@ -177,7 +198,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRole(?role $role): static
     {
         $this->role = $role;
-
         return $this;
     }
 
@@ -193,21 +213,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->rapportVeterinaire->contains($rapportVeterinaire)) {
             $this->rapportVeterinaire->add($rapportVeterinaire);
-            $rapportVeterinaire->setUser($this);
+            $rapportVeterinaire->setUtilisateur($this);
         }
-
         return $this;
     }
 
     public function removeRapportVeterinaire(rapportVeterinaire $rapportVeterinaire): static
     {
         if ($this->rapportVeterinaire->removeElement($rapportVeterinaire)) {
-            // set the owning side to null (unless already changed)
-            if ($rapportVeterinaire->getUser() === $this) {
-                $rapportVeterinaire->setUser(null);
+            // Set the owning side to null (unless already changed)
+            if ($rapportVeterinaire->getUtilisateur() === $this) {
+                $rapportVeterinaire->setUtilisateur(null);
             }
         }
-
         return $this;
     }
 }

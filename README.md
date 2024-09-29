@@ -1,71 +1,67 @@
                                                                                      Arcadia Zoo API
 
 
-Bienvenue dans le projet Arcadia Zoo API ! Ce projet est une API pour gérer les données d'un zoo, utilisant Symfony. Ce README fournit des informations sur la configuration, les mécanismes de sécurité, et les résolutions de problèmes rencontrés durant le développement.
+README - Back-End
+Version: 0.1 (2024-09-27)
+Ce fichier README a été généré le 2024-09-29 par M'barka Toure.
+Dernière mise-à-jour le : 2024-09-27.
 
-Table des Matières
-Introduction
-Installation
-Configuration
-Mécanismes de Sécurité
-Problèmes Résolus
-Veille Technologique
-Contributions
-Introduction
+INFORMATIONS GENERALES
+Titre du projet :
+API du Zoo Arcadia
 
 
-Arcadia Zoo API est une application Symfony conçue pour gérer les informations des animaux et des installations d'un zoo. Ce projet utilise des pratiques modernes de développement web et suit les meilleures pratiques de sécurité pour protéger les données.
 
-Installation
-Clonez le dépôt depuis GitHub et accédez au répertoire du projet.
+Adresse de contact :
+M'barka Toure
+Email : [MbarkaToure04@gmail.com]
 
-Installez les dépendances via Composer.
+INFORMATIONS METHODOLOGIQUES
+Conditions environnementales / expérimentales :
+Le développement back-end a été réalisé dans un environnement local utilisant XAMPP pour le serveur et la base de données.
 
+Description des sources et méthodes utilisées pour collecter et générer les données :
+L'application utilise un système de gestion de bases de données relationnelles avec MariaDB. Les fonctionnalités ont été définies en collaboration avec les formateurs de Studi.
 
-Configurez votre base de données en modifiant les paramètres de connexion.
+Méthodes de traitement des données :
+Le back-end a été développé en PHP avec le framework Symfony. Les opérations CRUD sont gérées via des entités Doctrine, facilitant l'interaction avec la base de données. La sécurité est assurée par JWT pour l'authentification des utilisateurs.
 
-Créez et migrez la base de données.
+Procédures d’assurance-qualité appliquées sur les données :
+Des tests unitaires et fonctionnels ont été réalisés pour s'assurer que chaque fonctionnalité répond aux exigences spécifiées dans le cahier des charges.
 
-Démarrez le serveur Symfony pour tester l'application.
+Autres informations contextuelles :
+La sécurité des données est une priorité, avec des mécanismes de protection intégrés pour gérer les informations sensibles des utilisateurs et des animaux.
 
-Configuration
+APERCU DES DONNEES ET FICHIERS
+Convention de nommage des fichiers :
+Les fichiers de code sont nommés de manière fonctionnelle, par exemple, ZooController.php, JwtService.php, et ApiTokenAuthenticator.php.
 
-Assurez-vous que les fichiers de configuration sont correctement définis :
+Arborescence/plan de classement des fichiers :
+/projet-zoo-backend
+│
+├── src
+│   ├── Controller
+│   │   └── ZooController.php
+│   ├── Service
+│   │   └── JwtService.php
+│   └── Security
+│       └── ApiTokenAuthenticator.php
+└── config
+    └── packages
+        └── security.yaml
+INFORMATIONS SPECIFIQUES AUX DONNEES POUR : ZooController.php
+Liste des variables/entêtes de colonne :
+Nom de la variable : animal
+Description : Détails de l'animal dans la base de données
+Unité de mesure : N/A
+Valeurs autorisées : Liste d'animaux
+Nom de la variable : habitat
+Description : Habitat de l'animal
+Unité de mesure : N/A
+Valeurs autorisées : Liste d'habitats
+Code des valeurs manquantes :
+Les valeurs manquantes sont représentées par "NULL" dans la base de données.
 
-NelmioApiDocBundle : Vérifiez que le fichier de configuration est correctement formaté pour éviter les erreurs de chargement YAML.
-
-NelmioCorsBundle : Utilisez des espaces pour l'indentation dans le fichier de configuration afin d'éviter les erreurs YAML.
-
-Mécanismes de Sécurité
-Voici les mécanismes de sécurité que nous avons mis en place dans le projet :
-
-Formulaires :
-
-Validation des données des utilisateurs pour éviter les soumissions incorrectes.
-
-Protection contre les attaques CSRF (Cross-Site Request Forgery).
-
-Composants Front-End :
-
-Validation côté client pour garantir des données correctes avant soumission.
-
-Composants Back-End :
-
-Authentification via tokens JWT pour sécuriser les points de terminaison de l'API.
-
-Règles d'accès pour protéger les routes sensibles.
-
-Problèmes Résolus
-Configuration YAML : Erreurs liées aux caractères inattendus ou à l'indentation ont été résolues en ajustant le formatage des fichiers YAML.
-
-Problèmes d'Indentation : Les erreurs dues aux tabulations dans les fichiers YAML ont été corrigées en utilisant des espaces.
-
-Extension de Configuration : Les erreurs concernant les extensions non trouvées ont été réglées en vérifiant les bundles installés et leur configuration.
-
-
-Veille Technologique
-J'ai effectué une veille technologique pour rester informé des vulnérabilités de sécurité et des meilleures pratiques en consultant des sources comme SymfonyCasts. Cette veille a permis d'améliorer la sécurité de l'API en suivant les recommandations actuelles.
-
-
-Les contributions sont les bienvenues ! Pour proposer des améliorations ou signaler des bugs, veuillez ouvrir une issue ou soumettre une pull request sur GitHub.
+Informations additionnelles :
+Ce fichier gère les routes et les opérations CRUD associées aux animaux et habitats du zoo.
 

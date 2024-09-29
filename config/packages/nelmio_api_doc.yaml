@@ -1,17 +1,17 @@
-nelmio_api_doc :
-    documentation :
-        info :
+nelmio_api_doc:
+    documentation:
+        info:
             title: Zoo API
-            description : Documentation de l'API Zoo Arcadia.
-            version : 1.0.0
-        components :
-            securitySchemes :
+            description: Documentation de l'API Zoo Arcadia.
+            version: 1.0.0
+        components:
+            securitySchemes:
                 X-AUTH-TOKEN:
-                    type : apiKey
+                    type: apiKey
                     name: X-AUTH-TOKEN
                     in: header
         security:
-            - X-AUTH-TOKEN: [ ]
+            - X-AUTH-TOKEN: []
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

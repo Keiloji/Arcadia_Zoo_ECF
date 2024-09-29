@@ -12,10 +12,8 @@ use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationExc
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
-
-// …
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class ApiTokenAuthenticator extends AbstractAuthenticator
 {
@@ -45,7 +43,7 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        return null;
+        return null; // No additional actions needed on success
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
