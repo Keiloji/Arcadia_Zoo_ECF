@@ -7,6 +7,7 @@ use App\Repository\HabitatRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Annotations as OA;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -22,6 +23,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/Habitat', name:'app_api_Habitat_')]
 class HabitatController extends AbstractController
 {
+    //$Habitat->setUtilisateur($this-getUser()));
     
     public function __construct(
         private EntityManagerInterface $manager, 
@@ -32,6 +34,34 @@ class HabitatController extends AbstractController
         
     }
     #[Route(methods:'POST')]
+
+
+    /** @OA\Get(
+     *     path="/api/Habitat",
+     *     summary="Créer un Habitat ",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Donner du Habitat à créer",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Nom du Habitat"),
+     *             @OA\Property(property="description", type="string", example="Description du Habitat")
+     *         )
+     * 
+     *     ),
+     *     @OA\Response(
+     *         response=261,
+     *         description="Habitat crée avec succès",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="name", type="string", example="Nom du Habitat"),
+     *             @OA\Property(property="description", type="string", example="Description Habitat"),
+     *             @OA\Property(property="createdAt", type="string", format="date-time")
+     *         )
+     *     )
+     *     )
+     */
+
     public function new(Request $request): JsonResponse
 {
     $Habitat = $this->serializer->deserialize($request->getContent(), Habitat::class, 'json');
@@ -54,9 +84,40 @@ class HabitatController extends AbstractController
 }
 
     #[Route('/{id}',name: 'show', methods:'GET')]
+
+/** 
+ * @OA\Put(
+ *     path="/api/Habitat/{id}",
+ *     summary="Mettre à jour un Habitat par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Habitat à mettre à jour",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Nom du Habitat"),
+ *             @OA\Property(property="description", type="string", example="Description du Habitat")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Habitat mis à jour avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Habitat non trouvé"
+ *     )
+ * )
+ */
+
     public function show(int $id): JsonResponse
 {
-    $Habitat= $this->repository->findOneBy(['id' => $id]);
+    $Habitat = $this->repository->findOneBy(['id' => $id]);
 
     if ($Habitat) {
         $responseData = $this->serializer->serialize($Habitat, format: 'json');
@@ -69,6 +130,37 @@ class HabitatController extends AbstractController
 }
 
     #[Route('/{id}',name:'edit', methods:'PUT')]
+
+/** 
+ * @OA\Put(
+ *     path="/api/Habitat/{id}",
+ *     summary="Mettre à jour un Habitat par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Habitat à mettre à jour",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Nom du Habitat"),
+ *             @OA\Property(property="description", type="string", example="Description du Habitat")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Habitat mis à jour avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Habitat non trouvé"
+ *     )
+ * )
+ */
+
     public function edit(int $id, Request $request): JsonResponse
 {
     $Habitat = $this->repository->findOneBy(['id' => $id]);
@@ -91,6 +183,29 @@ class HabitatController extends AbstractController
 }
 
     #[Route('/{id}',name:'delete', methods:'DELETE')]
+
+/** 
+ * @OA\Delete(
+ *     path="/api/Habitat/{id}",
+ *     summary="Supprimer un Habitat par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Habitat à supprimer",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Habitat supprimé avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Habitat non trouvé"
+ *     )
+ * )
+ */
+
     public function delete(int $id): JsonResponse
 {
     $Habitat = $this->repository->findOneBy(['id' => $id]);

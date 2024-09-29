@@ -7,6 +7,7 @@ use App\Repository\RaceRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Annotations as OA;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -22,6 +23,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/Race', name:'app_api_Race_')]
 class RaceController extends AbstractController
 {
+    //$Race->setUtilisateur($this-getUser()));
     
     public function __construct(
         private EntityManagerInterface $manager, 
@@ -32,6 +34,34 @@ class RaceController extends AbstractController
         
     }
     #[Route(methods:'POST')]
+
+
+    /** @OA\Get(
+     *     path="/api/Race",
+     *     summary="Créer un Race ",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Donner du Race à créer",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Nom du Race"),
+     *             @OA\Property(property="description", type="string", example="Description du Race")
+     *         )
+     * 
+     *     ),
+     *     @OA\Response(
+     *         response=261,
+     *         description="Race crée avec succès",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="name", type="string", example="Nom du Race"),
+     *             @OA\Property(property="description", type="string", example="Description Race"),
+     *             @OA\Property(property="createdAt", type="string", format="date-time")
+     *         )
+     *     )
+     *     )
+     */
+
     public function new(Request $request): JsonResponse
 {
     $Race = $this->serializer->deserialize($request->getContent(), Race::class, 'json');
@@ -54,9 +84,40 @@ class RaceController extends AbstractController
 }
 
     #[Route('/{id}',name: 'show', methods:'GET')]
+
+/** 
+ * @OA\Put(
+ *     path="/api/Race/{id}",
+ *     summary="Mettre à jour un Race par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Race à mettre à jour",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Nom du Race"),
+ *             @OA\Property(property="description", type="string", example="Description du Race")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Race mis à jour avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Race non trouvé"
+ *     )
+ * )
+ */
+
     public function show(int $id): JsonResponse
 {
-    $Race= $this->repository->findOneBy(['id' => $id]);
+    $Race = $this->repository->findOneBy(['id' => $id]);
 
     if ($Race) {
         $responseData = $this->serializer->serialize($Race, format: 'json');
@@ -69,11 +130,42 @@ class RaceController extends AbstractController
 }
 
     #[Route('/{id}',name:'edit', methods:'PUT')]
+
+/** 
+ * @OA\Put(
+ *     path="/api/Race/{id}",
+ *     summary="Mettre à jour un Race par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Race à mettre à jour",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Nom du Race"),
+ *             @OA\Property(property="description", type="string", example="Description du Race")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Race mis à jour avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Race non trouvé"
+ *     )
+ * )
+ */
+
     public function edit(int $id, Request $request): JsonResponse
 {
-    $Race= $this->repository->findOneBy(['id' => $id]);
+    $Race = $this->repository->findOneBy(['id' => $id]);
     if ($Race){
-        $Race= $this->serializer->deserialize(
+        $Race = $this->serializer->deserialize(
             $request->getContent(),
             Race::class,
             'json',
@@ -91,6 +183,29 @@ class RaceController extends AbstractController
 }
 
     #[Route('/{id}',name:'delete', methods:'DELETE')]
+
+/** 
+ * @OA\Delete(
+ *     path="/api/Race/{id}",
+ *     summary="Supprimer un Race par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Race à supprimer",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Race supprimé avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Race non trouvé"
+ *     )
+ * )
+ */
+
     public function delete(int $id): JsonResponse
 {
     $Race = $this->repository->findOneBy(['id' => $id]);

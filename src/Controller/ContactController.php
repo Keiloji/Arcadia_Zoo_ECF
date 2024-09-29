@@ -7,6 +7,7 @@ use App\Repository\ContactRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Annotations as OA;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -22,6 +23,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/Contact', name:'app_api_Contact_')]
 class ContactController extends AbstractController
 {
+    //$Contact->setUtilisateur($this-getUser()));
     
     public function __construct(
         private EntityManagerInterface $manager, 
@@ -32,6 +34,34 @@ class ContactController extends AbstractController
         
     }
     #[Route(methods:'POST')]
+
+
+    /** @OA\Get(
+     *     path="/api/Contact",
+     *     summary="Créer un Contact",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Donner du Contact à créer",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Nom du Contact"),
+     *             @OA\Property(property="description", type="string", example="Description du Contact")
+     *         )
+     * 
+     *     ),
+     *     @OA\Response(
+     *         response=261,
+     *         description="Contact crée avec succès",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="name", type="string", example="Nom du Contact"),
+     *             @OA\Property(property="description", type="string", example="Description Contact"),
+     *             @OA\Property(property="createdAt", type="string", format="date-time")
+     *         )
+     *     )
+     *     )
+     */
+
     public function new(Request $request): JsonResponse
 {
     $Contact = $this->serializer->deserialize($request->getContent(), Contact::class, 'json');
@@ -54,9 +84,40 @@ class ContactController extends AbstractController
 }
 
     #[Route('/{id}',name: 'show', methods:'GET')]
+
+/** 
+ * @OA\Put(
+ *     path="/api/Contact/{id}",
+ *     summary="Mettre à jour un Contact par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Contact à mettre à jour",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Nom du Contact"),
+ *             @OA\Property(property="description", type="string", example="Description du Contact")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Contact mis à jour avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Contact non trouvé"
+ *     )
+ * )
+ */
+
     public function show(int $id): JsonResponse
 {
-    $Contact= $this->repository->findOneBy(['id' => $id]);
+    $Contact = $this->repository->findOneBy(['id' => $id]);
 
     if ($Contact) {
         $responseData = $this->serializer->serialize($Contact, format: 'json');
@@ -69,11 +130,42 @@ class ContactController extends AbstractController
 }
 
     #[Route('/{id}',name:'edit', methods:'PUT')]
+
+/** 
+ * @OA\Put(
+ *     path="/api/Contact/{id}",
+ *     summary="Mettre à jour un Contact par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Contact à mettre à jour",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Nom du Contact"),
+ *             @OA\Property(property="description", type="string", example="Description du Contact")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Contact mis à jour avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Contact non trouvé"
+ *     )
+ * )
+ */
+
     public function edit(int $id, Request $request): JsonResponse
 {
-    $Contact= $this->repository->findOneBy(['id' => $id]);
+    $Contact = $this->repository->findOneBy(['id' => $id]);
     if ($Contact){
-        $Contact= $this->serializer->deserialize(
+        $Habitat= $this->serializer->deserialize(
             $request->getContent(),
             Contact::class,
             'json',
@@ -91,6 +183,29 @@ class ContactController extends AbstractController
 }
 
     #[Route('/{id}',name:'delete', methods:'DELETE')]
+
+/** 
+ * @OA\Delete(
+ *     path="/api/Contact/{id}",
+ *     summary="Supprimer un Contact par son ID",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du Contact à supprimer",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Contact supprimé avec succès"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Contact non trouvé"
+ *     )
+ * )
+ */
+
     public function delete(int $id): JsonResponse
 {
     $Contact = $this->repository->findOneBy(['id' => $id]);
