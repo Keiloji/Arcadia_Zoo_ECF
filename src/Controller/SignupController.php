@@ -102,3 +102,18 @@ return new JsonResponse(data: null, status: Response::HTTP_NOT_FOUND);
 }
 }
 
+// Inclure les fonctions de sécurité
+include 'includes/security.php'; 
+
+// Filtrage d'une entrée utilisateur
+$user_input = filter_input_user($_POST['input']);
+
+// Connexion à la base de données
+$pdo = get_db_connection();
+
+// Exécuter une requête SQL de manière sécurisée
+$result = execute_secure_query($pdo, "SELECT * FROM users WHERE username = :username", ['username' => $user_input]);
+
+// Sécurisation d'une inclusion de fichier
+secure_file_inclusion($_GET['page']);
+?>

@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\User; // Assurez-vous que vous avez une entité User
-use App\Repository\UserRepository; // Le repository de User
+use App\Entity\User; 
+use App\Repository\UserRepository; 
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+
 
 #[Route('/api/signin', name:'app_api_signin_')]
 class SigninController extends AbstractController
@@ -100,3 +101,19 @@ class SigninController extends AbstractController
 return new JsonResponse(data: null, status: Response::HTTP_NOT_FOUND);
 }
 }
+// Inclure les fonctions de sécurité
+include 'includes/security.php'; 
+
+// Filtrage d'une entrée utilisateur
+$user_input = filter_input_user($_POST['input']);
+
+// Connexion à la base de données
+$pdo = get_db_connection();
+
+// Exécuter une requête SQL de manière sécurisée
+$result = execute_secure_query($pdo, "SELECT * FROM users WHERE username = :username", ['username' => $user_input]);
+
+// Sécurisation d'une inclusion de fichier
+secure_file_inclusion($_GET['page']);
+?>
+
